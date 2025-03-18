@@ -1,9 +1,44 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import PreFooter from "./PreFooter";
 import Footer from "./Footer";
 import HeaderTop from "./HeaderTop";
 import Header from "./Header";
 
 function FormCargo() {
+  const [cargoStatusList, setCargoStatusList] = useState([]); // Kargo durumları için state
+  const [cargoNamesList, setCargoNamesList] = useState([]); // Kargo firmaları için state
+
+  useEffect(() => {
+    // Kargo Durumu Verisini Çekme
+    axios
+      .get("https://private-da348-yusuf7.apiary-mock.com/cargostatus")
+      .then((response) => {
+        console.log("Cargo Status API Response:", response.data);
+        if (response.data.CargoStatusList) {
+          setCargoStatusList(response.data.CargoStatusList);
+        } else {
+          console.error("CargoStatusList bulunamadı!");
+        }
+      })
+      .catch((error) =>
+        console.error("Cargo Status Veri çekme hatası:", error)
+      );
+
+    // Kargo Firmaları Verisini Çekme
+    axios
+      .get("https://private-da348-yusuf7.apiary-mock.com/cargonames")
+      .then((response) => {
+        console.log("Cargo Names API Response:", response.data);
+        if (response.data.CargoNames) {
+          setCargoNamesList(response.data.CargoNames);
+        } else {
+          console.error("CargoNames bulunamadı!");
+        }
+      })
+      .catch((error) => console.error("Cargo Names Veri çekme hatası:", error));
+  }, []);
+
   return (
     <div className="page-md">
       {/* BEGIN HEADER */}
@@ -156,19 +191,33 @@ function FormCargo() {
                         <label className="col-md-3 control-label">
                           Kargo Durumu
                         </label>
+
                         <div className="col-md-9">
                           <select
                             className="form-control"
-                            id="cmbCurrency"
-                            name="cmbCurrency"
+                            id="cargoStatus"
+                            name="cargoStatus"
                           >
-                            <option value={1}>...</option>
-                            <option value={2}>Hazırlanıyor</option>
-                            <option value={3}>Kargoya Verildi</option>
-                            <option value={4}>Teslim Edildi</option>
+                            <option value="">*Lütfen Seçim Yapınız</option>
+                            {cargoStatusList.length > 0 ? (
+                              cargoStatusList.map((status) => (
+                                <option
+                                  key={status.CargoStatusID}
+                                  value={status.CargoStatusID}
+                                >
+                                  {status.CargoStatusName}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="" disabled>
+                                Veri yükleniyor...
+                              </option>
+                            )}
                           </select>
                         </div>
                       </div>
+
+                      {/* Kargo Firması Dropdown */}
                       <div className="form-group">
                         <label className="col-md-3 control-label">
                           Kargo Firması
@@ -176,17 +225,28 @@ function FormCargo() {
                         <div className="col-md-9">
                           <select
                             className="form-control"
-                            id="cmbCurrency"
-                            name="cmbCurrency"
+                            id="cargoCompany"
+                            name="cargoCompany"
                           >
-                            <option value={1}>*Lütfen Seçim Yapınız</option>
-                            <option value={2}>Yurtiçi Kargo</option>
-                            <option value={3}>Aras Kargo</option>
-                            <option value={4}>Mng Kargo</option>
-                            <option value={5}>UPS Kargo</option>
+                            <option value="">*Lütfen Seçim Yapınız</option>
+                            {cargoNamesList.length > 0 ? (
+                              cargoNamesList.map((company) => (
+                                <option
+                                  key={company.CargoNameID}
+                                  value={company.CargoNameID}
+                                >
+                                  {company.CargoStatusName}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="" disabled>
+                                Veri yükleniyor...
+                              </option>
+                            )}
                           </select>
                         </div>
                       </div>
+
                       <div className="form-actions right">
                         <button type="submit" className="btn green">
                           Kaydet
