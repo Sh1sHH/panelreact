@@ -93,10 +93,10 @@ function Header() {
                   </a>
                   <ul className="dropdown-menu">
                     <li className=" ">
-                      <a href="FormCargo.html">Yeni Kargo </a>
+                      <a href="FormCargo">Yeni Kargo </a>
                     </li>
                     <li className=" ">
-                      <a href="List_Cargo.html">Kargo Listesi </a>
+                      <a href="ListCargo">Kargo Listesi </a>
                     </li>
                   </ul>
                 </li>

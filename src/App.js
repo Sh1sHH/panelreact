@@ -7,6 +7,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<FormCargo />} />
+        <Route path="formcargo" element={<FormCargo />} />
         <Route path="listcargo" element={<List_Cargo />} />
       </Routes>
     </div>
