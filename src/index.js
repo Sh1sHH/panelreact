@@ -1,13 +1,17 @@
 import React from "react";
-import ReactDOM from "react-dom/client"; // Değiştirildi
-import App from "./App";
+import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import "./index.css";
+import App from "./App";
 
-// React 18 için root oluşturuluyor
+// Create root for React 18
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+// Render app wrapped in BrowserRouter
 root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
 );

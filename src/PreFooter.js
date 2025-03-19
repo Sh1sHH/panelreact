@@ -1,5 +1,8 @@
+import React from "react";
+
 function PreFooter() {
   return (
+    <div>
     <div className="page-prefooter">
       <div className="container">
         <div className="row">
@@ -10,7 +13,7 @@ function PreFooter() {
               dolore.
             </p>
           </div>
-          <div className="col-md-3 col-sm-6 col-xs12 footer-block">
+          <div className="col-md-3 col-sm-6 col-xs-12 footer-block">
             <h2>Subscribe Email</h2>
             <div className="subscribe-form">
               <form action="javascript:;">
@@ -94,6 +97,8 @@ function PreFooter() {
         </div>
       </div>
     </div>
+    </div>
   );
 }
+
 export default PreFooter;

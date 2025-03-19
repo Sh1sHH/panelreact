@@ -1,5 +1,4 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import FormCargo from "./FormCargo";
 import List_Cargo from "./List_Cargo";
 import FormOrder from "./FormOrder";
@@ -9,59 +8,54 @@ import List_Musteri from "./List_Musteri";
 import FormProduct from "./FormProduct";
 import List_Product from "./List_Product";
 import LoginEkrani from "./LoginEkrani";
-
-// Özel Route Koruması
-const PrivateRoute = ({ element }) => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem("username");
-    if (!isAuthenticated) {
-      navigate("/login"); // Eğer giriş yapılmamışsa login sayfasına yönlendir
-    }
-  }, [navigate]);
-
-  return element;
-};
+import PrivateRoute from "./PrivateRoute";
 
 function App() {
+  const isAuthenticated = localStorage.getItem("username");
+
   return (
     <div className="App">
       <Routes>
-        {/* Giriş sayfası herkes erişebilir */}
-        <Route path="login" element={<LoginEkrani />} />
+        {/* Default route redirects to login or dashboard based on auth status */}
+        <Route 
+          path="/" 
+          element={isAuthenticated ? <Navigate to="/FormMusteri" /> : <Navigate to="/login" />} 
+        />
+        
+        {/* Login page */}
+        <Route path="/login" element={<LoginEkrani />} />
 
-        {/* Giriş yapmadan erişilemez sayfalar */}
-        <Route path="/" element={<PrivateRoute element={<FormCargo />} />} />
+        {/* Protected Routes */}
         <Route
-          path="formcargo"
+          path="/formcargo"
           element={<PrivateRoute element={<FormCargo />} />}
         />
         <Route
-          path="listcargo"
+          path="/listcargo"
           element={<PrivateRoute element={<List_Cargo />} />}
         />
         <Route
-          path="formorder"
+          path="/formorder"
           element={<PrivateRoute element={<FormOrder />} />}
         />
         <Route
-          path="listorder"
+          path="/listorder"
           element={<PrivateRoute element={<List_Order />} />}
         />
         <Route
-          path="FormMusteri"
+          path="/FormMusteri"
           element={<PrivateRoute element={<FormMusteri />} />}
         />
         <Route
-          path="ListMusteri"
+          path="/ListMusteri"
           element={<PrivateRoute element={<List_Musteri />} />}
         />
         <Route
-          path="FormProduct"
+          path="/FormProduct"
           element={<PrivateRoute element={<FormProduct />} />}
         />
         <Route
-          path="ListProduct"
+          path="/ListProduct"
           element={<PrivateRoute element={<List_Product />} />}
         />
       </Routes>

@@ -1,9 +1,17 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const PrivateRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("user"); // Kullanıcı oturumu kontrol et
-  return isAuthenticated ? children : <Navigate to="/login" />;
+const PrivateRoute = ({ element }) => {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("username");
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  return element;
 };
 
 export default PrivateRoute;
