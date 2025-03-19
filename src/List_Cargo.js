@@ -11,11 +11,11 @@ const List_Cargo = () => {
 
   useEffect(() => {
     axios
-      .get("https://private-da348-yusuf7.apiary-mock.com/cargoG")
+      .get("https://private-da348-yusuf7.apiary-mock.com/cargoG") // API'den veri çek
       .then((response) => {
-        console.log("API Response:", response.data); // API verisini konsolda gör
-        const data = response.data.Cargos ? response.data.Cargos : []; // Cargos dizisini al
-        setCargoData(data); // State'e kaydet
+        console.log("API Response:", response.data); // Gelen veriyi konsola yaz
+        const data = response.data.Cargos ? response.data.Cargos : []; // Eğer "Cargos" varsa al, yoksa boş array kullan
+        setCargoData(data); // Alınan veriyi state'e aktar
       })
       .catch((error) => console.error("Veri çekme hatası:", error));
   }, []);
