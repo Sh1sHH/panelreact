@@ -8,10 +8,17 @@ import Header from "./Header";
 function FormCargo() {
   const [cargoStatusList, setCargoStatusList] = useState([]);
   const [cargoNamesList, setCargoNamesList] = useState([]);
-  const [cargoOrders, setCargoOrders] = useState([]); // Yeni eklenen state (Sipariş numaraları)
+  const [cargoOrders, setCargoOrders] = useState([]);
+
+  const [formData, setFormData] = useState({
+    CargoNo: "",
+    CargoDate: "",
+    DeliveryDate: "",
+    CargoStatusID: "",
+    CargoNameID: "",
+  });
 
   useEffect(() => {
-    // Kargo Durumu Verisini Çekme
     axios
       .get("https://private-da348-yusuf7.apiary-mock.com/cargostatus")
       .then((response) => {
@@ -23,7 +30,6 @@ function FormCargo() {
         console.error("Cargo Status Veri çekme hatası:", error)
       );
 
-    // Kargo Firmaları Verisini Çekme
     axios
       .get("https://private-da348-yusuf7.apiary-mock.com/cargonames")
       .then((response) => {
@@ -33,19 +39,49 @@ function FormCargo() {
       })
       .catch((error) => console.error("Cargo Names Veri çekme hatası:", error));
 
-    // Sipariş Numaralarını Çekme
     axios
-      .get("https://private-da348-yusuf7.apiary-mock.com/cargo")
+      .get("https://private-da348-yusuf7.apiary-mock.com/cargoG")
       .then((response) => {
         console.log("Cargo Orders API Response:", response.data);
         if (response.data.Cargos) {
-          setCargoOrders(response.data.Cargos); // Cargos listesini kaydet
+          setCargoOrders(response.data.Cargos);
         }
       })
       .catch((error) =>
         console.error("Cargo Orders Veri çekme hatası:", error)
       );
   }, []);
+
+  // Formdaki değişiklikleri al
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Formu API'ye POST et
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "https://private-da348-yusuf7.apiary-mock.com/cargoP", // POST isteği gönderilecek URL
+        formData
+      );
+      console.log("POST Başarılı:", response.data);
+      alert("Kargo başarıyla eklendi! ✅");
+
+      // Formu temizle
+      setFormData({
+        CargoNo: "",
+        CargoDate: "",
+        DeliveryDate: "",
+        CargoStatusID: "",
+        CargoNameID: "",
+      });
+    } catch (error) {
+      console.error("POST Hatası:", error);
+      alert("Bir hata oluştu. ❌");
+    }
+  };
 
   return (
     <div className="page-md">
@@ -69,11 +105,11 @@ function FormCargo() {
             </ul>
 
             <div className="row">
-              <div className="col-md-12 ">
+              <div className="col-md-12">
                 <div className="portlet light">
                   <div className="portlet-title">
                     <div className="caption">
-                      <span className="caption-subject font-green-sharp bold ">
+                      <span className="caption-subject font-green-sharp bold">
                         Kargo Kayıt Formu
                       </span>
                     </div>
@@ -82,7 +118,11 @@ function FormCargo() {
                     </div>
                   </div>
                   <div className="portlet-body form">
-                    <form className="form-horizontal" role="form">
+                    <form
+                      className="form-horizontal"
+                      role="form"
+                      onSubmit={handleSubmit}
+                    >
                       <div className="form-body">
                         {/* Sipariş No Dropdown */}
                         <div className="form-group">
@@ -92,56 +132,53 @@ function FormCargo() {
                           <div className="col-md-9">
                             <select
                               className="form-control"
-                              id="cmbCurrency"
-                              name="cmbCurrency"
+                              name="CargoNo"
+                              value={formData.CargoNo}
+                              onChange={handleChange}
+                              required
                             >
                               <option value="">*Lütfen Seçim Yapınız</option>
-                              {cargoOrders.length > 0 ? (
-                                cargoOrders.map((order) => (
-                                  <option
-                                    key={order.CargoNo}
-                                    value={order.CargoNo}
-                                  >
-                                    {order.CargoNo}
-                                  </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  Veri yükleniyor...
+                              {cargoOrders.map((order) => (
+                                <option
+                                  key={order.CargoNo}
+                                  value={order.CargoNo}
+                                >
+                                  {order.CargoNo}
                                 </option>
-                              )}
+                              ))}
                             </select>
                           </div>
                         </div>
 
-                        {/* Kargo Tarihi */}
+                        {/* Kargo ve Teslim Tarihleri */}
                         <div className="form-group">
                           <label className="control-label col-md-3">
                             Kargo Tarihi
                           </label>
                           <div className="col-md-9">
                             <input
-                              className="form-control input-medium date-picker"
+                              className="form-control input-medium"
                               type="date"
-                              name="dtBirthDate"
-                              id="dtBirthDate"
-                              autoComplete="off"
+                              name="CargoDate"
+                              value={formData.CargoDate}
+                              onChange={handleChange}
+                              required
                             />
                           </div>
                         </div>
 
-                        {/* Teslim Tarihi */}
                         <div className="form-group">
                           <label className="control-label col-md-3">
                             Teslim Tarihi
                           </label>
                           <div className="col-md-9">
                             <input
-                              className="form-control input-medium date-picker"
+                              className="form-control input-medium"
                               type="date"
-                              name="dtBirthDate"
-                              id="dtBirthDate"
-                              autoComplete="off"
+                              name="DeliveryDate"
+                              value={formData.DeliveryDate}
+                              onChange={handleChange}
+                              required
                             />
                           </div>
                         </div>
@@ -154,24 +191,20 @@ function FormCargo() {
                           <div className="col-md-9">
                             <select
                               className="form-control"
-                              id="cargoStatus"
-                              name="cargoStatus"
+                              name="CargoStatusID"
+                              value={formData.CargoStatusID}
+                              onChange={handleChange}
+                              required
                             >
                               <option value="">*Lütfen Seçim Yapınız</option>
-                              {cargoStatusList.length > 0 ? (
-                                cargoStatusList.map((status) => (
-                                  <option
-                                    key={status.CargoStatusID}
-                                    value={status.CargoStatusID}
-                                  >
-                                    {status.CargoStatusName}
-                                  </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  Veri yükleniyor...
+                              {cargoStatusList.map((status) => (
+                                <option
+                                  key={status.CargoStatusID}
+                                  value={status.CargoStatusID}
+                                >
+                                  {status.CargoStatusName}
                                 </option>
-                              )}
+                              ))}
                             </select>
                           </div>
                         </div>
@@ -184,24 +217,20 @@ function FormCargo() {
                           <div className="col-md-9">
                             <select
                               className="form-control"
-                              id="cargoCompany"
-                              name="cargoCompany"
+                              name="CargoNameID"
+                              value={formData.CargoNameID}
+                              onChange={handleChange}
+                              required
                             >
                               <option value="">*Lütfen Seçim Yapınız</option>
-                              {cargoNamesList.length > 0 ? (
-                                cargoNamesList.map((company) => (
-                                  <option
-                                    key={company.CargoNameID}
-                                    value={company.CargoNameID}
-                                  >
-                                    {company.CargoStatusName}
-                                  </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  Veri yükleniyor...
+                              {cargoNamesList.map((company) => (
+                                <option
+                                  key={company.CargoNameID}
+                                  value={company.CargoNameID}
+                                >
+                                  {company.CargoStatusName}
                                 </option>
-                              )}
+                              ))}
                             </select>
                           </div>
                         </div>
@@ -223,9 +252,6 @@ function FormCargo() {
 
       <PreFooter />
       <Footer />
-      <div className="scroll-to-top">
-        <i className="icon-arrow-up" />
-      </div>
     </div>
   );
 }

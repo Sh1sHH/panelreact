@@ -11,7 +11,7 @@ const List_Cargo = () => {
 
   useEffect(() => {
     axios
-      .get("https://private-da348-yusuf7.apiary-mock.com/cargo")
+      .get("https://private-da348-yusuf7.apiary-mock.com/cargoG")
       .then((response) => {
         console.log("API Response:", response.data); // API verisini konsolda gör
         const data = response.data.Cargos ? response.data.Cargos : []; // Cargos dizisini al
