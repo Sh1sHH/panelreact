@@ -8,7 +8,7 @@ function Header() {
         <div className="hor-menu ">
           <ul className="nav navbar-nav">
             <li>
-              <a href="index.html">Dashboard</a>
+              <a href="index">Dashboard</a>
             </li>
             <li className="menu-dropdown classic-menu-dropdown ">
               <a
@@ -27,10 +27,10 @@ function Header() {
                   </a>
                   <ul className="dropdown-menu">
                     <li className=" ">
-                      <a href="FormMusteri.html">Müşteri Yeni Kayıt </a>
+                      <a href="FormMusteri">Müşteri Yeni Kayıt </a>
                     </li>
                     <li className=" ">
-                      <a href="List_Musteri.html">Müşteri Listesi </a>
+                      <a href="ListMusteri">Müşteri Listesi </a>
                     </li>
                   </ul>
                 </li>
@@ -53,10 +53,10 @@ function Header() {
                   </a>
                   <ul className="dropdown-menu">
                     <li className=" ">
-                      <a href="FormProduct.html">Yeni Ürün </a>
+                      <a href="FormProduct">Yeni Ürün </a>
                     </li>
                     <li className=" ">
-                      <a href="List_Product.html">Ürün Listesi </a>
+                      <a href="ListProduct">Ürün Listesi </a>
                     </li>
                   </ul>
                 </li>
@@ -79,10 +79,10 @@ function Header() {
                   </a>
                   <ul className="dropdown-menu">
                     <li className=" ">
-                      <a href="FormOrder.html">Yeni Sipariş </a>
+                      <a href="FormOrder">Yeni Sipariş </a>
                     </li>
                     <li className=" ">
-                      <a href="List_Order.html">Sipariş Listesi </a>
+                      <a href="ListOrder">Sipariş Listesi </a>
                     </li>
                   </ul>
                 </li>

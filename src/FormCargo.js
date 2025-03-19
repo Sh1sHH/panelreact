@@ -6,19 +6,17 @@ import HeaderTop from "./HeaderTop";
 import Header from "./Header";
 
 function FormCargo() {
-  const [cargoStatusList, setCargoStatusList] = useState([]); // Kargo durumları için state
-  const [cargoNamesList, setCargoNamesList] = useState([]); // Kargo firmaları için state
+  const [cargoStatusList, setCargoStatusList] = useState([]);
+  const [cargoNamesList, setCargoNamesList] = useState([]);
+  const [cargoOrders, setCargoOrders] = useState([]); // Yeni eklenen state (Sipariş numaraları)
 
   useEffect(() => {
     // Kargo Durumu Verisini Çekme
     axios
       .get("https://private-da348-yusuf7.apiary-mock.com/cargostatus")
       .then((response) => {
-        console.log("Cargo Status API Response:", response.data);
         if (response.data.CargoStatusList) {
           setCargoStatusList(response.data.CargoStatusList);
-        } else {
-          console.error("CargoStatusList bulunamadı!");
         }
       })
       .catch((error) =>
@@ -29,76 +27,35 @@ function FormCargo() {
     axios
       .get("https://private-da348-yusuf7.apiary-mock.com/cargonames")
       .then((response) => {
-        console.log("Cargo Names API Response:", response.data);
         if (response.data.CargoNames) {
           setCargoNamesList(response.data.CargoNames);
-        } else {
-          console.error("CargoNames bulunamadı!");
         }
       })
       .catch((error) => console.error("Cargo Names Veri çekme hatası:", error));
+
+    // Sipariş Numaralarını Çekme
+    axios
+      .get("https://private-da348-yusuf7.apiary-mock.com/cargo")
+      .then((response) => {
+        console.log("Cargo Orders API Response:", response.data);
+        if (response.data.Cargos) {
+          setCargoOrders(response.data.Cargos); // Cargos listesini kaydet
+        }
+      })
+      .catch((error) =>
+        console.error("Cargo Orders Veri çekme hatası:", error)
+      );
   }, []);
 
   return (
     <div className="page-md">
-      {/* BEGIN HEADER */}
       <div className="page-header">
-        {/* BEGIN HEADER TOP */}
         <HeaderTop />
-        {/* END HEADER TOP */}
-        {/* BEGIN HEADER MENU */}
         <Header />
-        {/* END HEADER MENU */}
       </div>
-      {/* END HEADER */}
-      {/* BEGIN PAGE CONTAINER */}
       <div className="page-container">
-        {/* BEGIN PAGE CONTENT */}
         <div className="page-content">
           <div className="container">
-            {/* BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM*/}
-            <div
-              className="modal fade"
-              id="portlet-config"
-              tabIndex={-1}
-              role="dialog"
-              aria-labelledby="myModalLabel"
-              aria-hidden="true"
-            >
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <button
-                      type="button"
-                      className="close"
-                      data-dismiss="modal"
-                      aria-hidden="true"
-                    />
-                    <h4 className="modal-title">Modal title</h4>
-                  </div>
-                  <div className="modal-body">
-                    Widget settings form goes here
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn blue">
-                      Save changes
-                    </button>
-                    <button
-                      type="button"
-                      className="btn default"
-                      data-dismiss="modal"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-                {/* /.modal-content */}
-              </div>
-              {/* /.modal-dialog */}
-            </div>
-            {/* /.modal */}
-            {/* END SAMPLE PORTLET CONFIGURATION MODAL FORM*/}
-            {/* BEGIN PAGE BREADCRUMB */}
             <ul className="page-breadcrumb breadcrumb">
               <li>
                 <a href="#">Ana Sayfa</a>
@@ -110,11 +67,9 @@ function FormCargo() {
               </li>
               <li className="active">Yeni Kargo</li>
             </ul>
-            {/* END PAGE BREADCRUMB */}
-            {/* BEGIN PAGE CONTENT INNER */}
+
             <div className="row">
               <div className="col-md-12 ">
-                {/* BEGIN SAMPLE FORM PORTLET*/}
                 <div className="portlet light">
                   <div className="portlet-title">
                     <div className="caption">
@@ -127,14 +82,9 @@ function FormCargo() {
                     </div>
                   </div>
                   <div className="portlet-body form">
-                    <form
-                      className="form-horizontal"
-                      role="form"
-                      method="post"
-                      name="form1"
-                      id="form1"
-                    >
+                    <form className="form-horizontal" role="form">
                       <div className="form-body">
+                        {/* Sipariş No Dropdown */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
                             Sipariş No
@@ -145,129 +95,133 @@ function FormCargo() {
                               id="cmbCurrency"
                               name="cmbCurrency"
                             >
-                              <option value={1}>....</option>
-                              <option value={2}>2024031001</option>
-                              <option value={3}>2024031002</option>
-                              <option value={4}>2024031003</option>
-                              <option value={5}>2024031004</option>
-                              <option value={6}>2024031005</option>
+                              <option value="">*Lütfen Seçim Yapınız</option>
+                              {cargoOrders.length > 0 ? (
+                                cargoOrders.map((order) => (
+                                  <option
+                                    key={order.CargoNo}
+                                    value={order.CargoNo}
+                                  >
+                                    {order.CargoNo}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  Veri yükleniyor...
+                                </option>
+                              )}
                             </select>
                           </div>
                         </div>
-                      </div>
-                      <div className="form-group">
-                        <label className="control-label col-md-3">
-                          Kargo Tarihi
-                        </label>
-                        <div className="col-md-9">
-                          <input
-                            className="form-control input-medium date-picker"
-                            size={16}
-                            type="text"
-                            name="dtBirthDate"
-                            id="dtBirthDate"
-                            autoComplete="off"
-                            defaultValue
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <label className="control-label col-md-3">
-                          Teslim Tarihi
-                        </label>
-                        <div className="col-md-9">
-                          <input
-                            className="form-control input-medium date-picker"
-                            size={16}
-                            type="text"
-                            name="dtBirthDate"
-                            id="dtBirthDate"
-                            autoComplete="off"
-                            defaultValue
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group">
-                        <label className="col-md-3 control-label">
-                          Kargo Durumu
-                        </label>
 
-                        <div className="col-md-9">
-                          <select
-                            className="form-control"
-                            id="cargoStatus"
-                            name="cargoStatus"
-                          >
-                            <option value="">*Lütfen Seçim Yapınız</option>
-                            {cargoStatusList.length > 0 ? (
-                              cargoStatusList.map((status) => (
-                                <option
-                                  key={status.CargoStatusID}
-                                  value={status.CargoStatusID}
-                                >
-                                  {status.CargoStatusName}
+                        {/* Kargo Tarihi */}
+                        <div className="form-group">
+                          <label className="control-label col-md-3">
+                            Kargo Tarihi
+                          </label>
+                          <div className="col-md-9">
+                            <input
+                              className="form-control input-medium date-picker"
+                              type="date"
+                              name="dtBirthDate"
+                              id="dtBirthDate"
+                              autoComplete="off"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Teslim Tarihi */}
+                        <div className="form-group">
+                          <label className="control-label col-md-3">
+                            Teslim Tarihi
+                          </label>
+                          <div className="col-md-9">
+                            <input
+                              className="form-control input-medium date-picker"
+                              type="date"
+                              name="dtBirthDate"
+                              id="dtBirthDate"
+                              autoComplete="off"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Kargo Durumu Dropdown */}
+                        <div className="form-group">
+                          <label className="col-md-3 control-label">
+                            Kargo Durumu
+                          </label>
+                          <div className="col-md-9">
+                            <select
+                              className="form-control"
+                              id="cargoStatus"
+                              name="cargoStatus"
+                            >
+                              <option value="">*Lütfen Seçim Yapınız</option>
+                              {cargoStatusList.length > 0 ? (
+                                cargoStatusList.map((status) => (
+                                  <option
+                                    key={status.CargoStatusID}
+                                    value={status.CargoStatusID}
+                                  >
+                                    {status.CargoStatusName}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  Veri yükleniyor...
                                 </option>
-                              ))
-                            ) : (
-                              <option value="" disabled>
-                                Veri yükleniyor...
-                              </option>
-                            )}
-                          </select>
+                              )}
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Kargo Firması Dropdown */}
-                      <div className="form-group">
-                        <label className="col-md-3 control-label">
-                          Kargo Firması
-                        </label>
-                        <div className="col-md-9">
-                          <select
-                            className="form-control"
-                            id="cargoCompany"
-                            name="cargoCompany"
-                          >
-                            <option value="">*Lütfen Seçim Yapınız</option>
-                            {cargoNamesList.length > 0 ? (
-                              cargoNamesList.map((company) => (
-                                <option
-                                  key={company.CargoNameID}
-                                  value={company.CargoNameID}
-                                >
-                                  {company.CargoStatusName}
+                        {/* Kargo Firması Dropdown */}
+                        <div className="form-group">
+                          <label className="col-md-3 control-label">
+                            Kargo Firması
+                          </label>
+                          <div className="col-md-9">
+                            <select
+                              className="form-control"
+                              id="cargoCompany"
+                              name="cargoCompany"
+                            >
+                              <option value="">*Lütfen Seçim Yapınız</option>
+                              {cargoNamesList.length > 0 ? (
+                                cargoNamesList.map((company) => (
+                                  <option
+                                    key={company.CargoNameID}
+                                    value={company.CargoNameID}
+                                  >
+                                    {company.CargoStatusName}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  Veri yükleniyor...
                                 </option>
-                              ))
-                            ) : (
-                              <option value="" disabled>
-                                Veri yükleniyor...
-                              </option>
-                            )}
-                          </select>
+                              )}
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="form-actions right">
-                        <button type="submit" className="btn green">
-                          Kaydet
-                        </button>
+                        <div className="form-actions right">
+                          <button type="submit" className="btn green">
+                            Kaydet
+                          </button>
+                        </div>
                       </div>
                     </form>
                   </div>
                 </div>
               </div>
-              {/* END SAMPLE FORM PORTLET*/}
             </div>
           </div>
-          {/* END PAGE CONTENT INNER */}
         </div>
       </div>
-      {/* END PAGE CONTENT */}
-      {/* END PAGE CONTAINER */}
-      {/* BEGIN PRE-FOOTER */}
+
       <PreFooter />
-      {/* END PRE-FOOTER */}
-      {/* BEGIN FOOTER */}
       <Footer />
       <div className="scroll-to-top">
         <i className="icon-arrow-up" />
@@ -275,4 +229,5 @@ function FormCargo() {
     </div>
   );
 }
+
 export default FormCargo;
