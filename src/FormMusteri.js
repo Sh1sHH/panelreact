@@ -15,8 +15,10 @@ function FormMusteri() {
     txtSehir: "İstanbul", // Varsayılan değer
   });
 
-  const [responseMessage, setResponseMessage] = useState("");
+  const [submittedData, setSubmittedData] = useState(null); // Kaydedilen veriyi göstermek için state
+  const [responseMessage, setResponseMessage] = useState(""); // Kullanıcıya gösterilecek mesaj
 
+  // Kullanıcı girişlerini yakalama
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -25,18 +27,21 @@ function FormMusteri() {
     });
   };
 
+  // Formu gönderme işlemi
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        "https://private-da348-yusuf7.apiary-mock.com/Customers",
+        "https://private-da348-yusuf7.apiary-mock.com/CustomersP",
         formData
       );
-      setResponseMessage(response.data.Result);
+      console.log("Başarıyla Gönderildi:", response.data);
+      setSubmittedData(formData); // Kaydedilen veriyi ekranda göstermek için state'e yaz
+      setResponseMessage("Müşteri başarıyla kaydedildi! ✅");
     } catch (error) {
-      setResponseMessage("Bir hata oluştu!");
       console.error("Müşteri ekleme hatası:", error);
+      setResponseMessage("Bir hata oluştu! ❌");
     }
   };
 
@@ -178,6 +183,14 @@ function FormMusteri() {
                         </div>
                       </div>
                     </form>
+
+                    {/* Kullanıcı girdilerini ekrana yazdırma */}
+                    {submittedData && (
+                      <div className="alert alert-success mt-3">
+                        <h4>Kaydedilen Veri:</h4>
+                        <pre>{JSON.stringify(submittedData, null, 2)}</pre>
+                      </div>
+                    )}
 
                     {responseMessage && (
                       <div className="alert alert-info mt-3">

@@ -18,6 +18,7 @@ function FormCargo() {
   });
 
   const [submittedData, setSubmittedData] = useState(null); // Kaydedilen veriyi göstermek için state
+  const [responseMessage, setResponseMessage] = useState(""); // Kullanıcıya gösterilecek mesaj
 
   useEffect(() => {
     // Kargo Durumu Verisini Çekme
@@ -71,16 +72,13 @@ function FormCargo() {
       );
       console.log("Başarıyla Gönderildi:", response.data);
       setSubmittedData(formData);
-      alert("Başarıyla kaydedildi! ✅");
+      setResponseMessage("Kargo başarıyla kaydedildi! ✅");
     } catch (error) {
       console.error(
         "POST Hatası:",
         error.response ? error.response.data : error
       );
-      alert(
-        "Bir hata oluştu. ❌\n" +
-          (error.response ? JSON.stringify(error.response.data) : error.message)
-      );
+      setResponseMessage("Bir hata oluştu! ❌");
     }
   };
 
@@ -231,9 +229,15 @@ function FormCargo() {
 
                     {/* Kullanıcı girdilerini ekrana yazdırma */}
                     {submittedData && (
-                      <div className="alert alert-success">
+                      <div className="alert alert-success mt-3">
                         <h4>Kaydedilen Veri:</h4>
                         <pre>{JSON.stringify(submittedData, null, 2)}</pre>
+                      </div>
+                    )}
+
+                    {responseMessage && (
+                      <div className="alert alert-info mt-3">
+                        {responseMessage}
                       </div>
                     )}
                   </div>
