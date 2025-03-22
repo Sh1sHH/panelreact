@@ -12,25 +12,22 @@ function FormOrder() {
     quantity: "",
     unitPrice: "",
     totalPrice: "",
-    currency: "TL", // Varsayılan değer
+    currency: "TL",
   });
 
-  const [responseMessage, setResponseMessage] = useState("");
+  const [submittedData, setSubmittedData] = useState(null); // Kaydedilen veriyi göstermek için state
+  const [responseMessage, setResponseMessage] = useState(""); // Kullanıcıya gösterilecek mesaj
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
-
-    // Toplam fiyatı otomatik hesapla
-    if (name === "quantity" || name === "unitPrice") {
-      setFormData((prev) => ({
-        ...prev,
-        totalPrice: prev.quantity * prev.unitPrice || "",
-      }));
-    }
+      totalPrice:
+        name === "quantity" || name === "unitPrice"
+          ? prev.quantity * prev.unitPrice || ""
+          : prev.totalPrice,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -38,13 +35,18 @@ function FormOrder() {
 
     try {
       const response = await axios.post(
-        "https://your-api-endpoint.com/OrdersP",
+        "https://private-da348-yusuf7.apiary-mock.com/OrdersP",
         formData
       );
-      setResponseMessage("Sipariş başarıyla eklendi!");
+      console.log("Başarıyla Gönderildi:", response.data);
+      setSubmittedData(formData);
+      setResponseMessage("Sipariş başarıyla kaydedildi! ✅");
     } catch (error) {
-      setResponseMessage("Sipariş eklenirken hata oluştu.");
-      console.error("Sipariş ekleme hatası:", error);
+      console.error(
+        "POST Hatası:",
+        error.response ? error.response.data : error
+      );
+      setResponseMessage("Bir hata oluştu! ❌");
     }
   };
 
@@ -164,7 +166,6 @@ function FormOrder() {
                               className="form-control"
                               placeholder="Toplam Fiyat"
                               value={formData.totalPrice}
-                              onChange={handleChange}
                               readOnly
                             />
                           </div>
@@ -197,7 +198,14 @@ function FormOrder() {
                       </div>
                     </form>
 
-                    {/* API Yanıtı */}
+                    {/* Kullanıcı girdilerini ekrana yazdırma */}
+                    {submittedData && (
+                      <div className="alert alert-success mt-3">
+                        <h4>Kaydedilen Sipariş:</h4>
+                        <pre>{JSON.stringify(submittedData, null, 2)}</pre>
+                      </div>
+                    )}
+
                     {responseMessage && (
                       <div className="alert alert-info mt-3">
                         {responseMessage}

@@ -12,10 +12,11 @@ function FormProduct() {
     category: "",
     stockStatus: "",
     price: "",
-    currency: "TL", // Varsayılan para birimi TL
+    currency: "TL",
   });
 
-  const [responseMessage, setResponseMessage] = useState("");
+  const [submittedData, setSubmittedData] = useState(null); // POST edilen veriyi ekranda göstermek için
+  const [responseMessage, setResponseMessage] = useState(""); // Kullanıcıya gösterilecek mesaj
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,14 +31,19 @@ function FormProduct() {
 
     try {
       const response = await axios.post(
-        "https://private-da348-yusuf7.apiary-mock.com/ProductsP", // API URL
-        { Products: [formData] } // API'ye gönderilecek JSON formatı
+        "https://private-da348-yusuf7.apiary-mock.com/ProductsP",
+        formData
       );
 
-      setResponseMessage(response.data.Result || "Ürün başarıyla eklendi!");
+      console.log("Ürün Başarıyla Gönderildi:", response.data);
+      setSubmittedData(formData);
+      setResponseMessage("Ürün başarıyla kaydedildi! ✅");
     } catch (error) {
-      setResponseMessage("Ürün eklenirken hata oluştu!");
-      console.error("Ürün ekleme hatası:", error);
+      console.error(
+        "Ürün ekleme hatası:",
+        error.response ? error.response.data : error
+      );
+      setResponseMessage("Ürün eklenirken hata oluştu! ❌");
     }
   };
 
@@ -196,6 +202,14 @@ function FormProduct() {
                         </div>
                       </div>
                     </form>
+
+                    {/* Kullanıcının girdiği verileri ekrana gösterme */}
+                    {submittedData && (
+                      <div className="alert alert-success mt-3">
+                        <h4>Kaydedilen Veri:</h4>
+                        <pre>{JSON.stringify(submittedData, null, 2)}</pre>
+                      </div>
+                    )}
 
                     {responseMessage && (
                       <div className="alert alert-info mt-3">
