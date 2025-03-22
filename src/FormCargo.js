@@ -65,6 +65,12 @@ function FormCargo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Zorunlu alanları kontrol et
+    if (!formData.CargoNo || !formData.CargoDate || !formData.CargoStatusID) {
+      setResponseMessage("Lütfen zorunlu alanları doldurunuz! ❌");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://private-da348-yusuf7.apiary-mock.com/cargoP",
@@ -73,6 +79,18 @@ function FormCargo() {
       console.log("Başarıyla Gönderildi:", response.data);
       setSubmittedData(formData);
       setResponseMessage("Kargo başarıyla kaydedildi! ✅");
+      
+      // Formu sıfırla
+      setFormData({
+        CargoNo: "",
+        CargoDate: "",
+        DeliveryDate: "",
+        CargoStatusID: "",
+        CargoNameID: "",
+      });
+      
+      // Form elemanlarını sıfırla
+      e.target.reset();
     } catch (error) {
       console.error(
         "POST Hatası:",
@@ -119,15 +137,16 @@ function FormCargo() {
                         {/* Sipariş No */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Sipariş No
+                            Sipariş No *
                           </label>
                           <div className="col-md-9">
                             <select
                               className="form-control"
                               name="CargoNo"
                               onChange={handleChange}
+                              required
                             >
-                              <option value="">*Lütfen Seçim Yapınız</option>
+                              <option value="">Lütfen Seçim Yapınız</option>
                               {cargoOrders.map((order) => (
                                 <option
                                   key={order.CargoNo}
@@ -143,7 +162,7 @@ function FormCargo() {
                         {/* Kargo Tarihi */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Kargo Tarihi
+                            Kargo Tarihi *
                           </label>
                           <div className="col-md-9">
                             <input
@@ -151,6 +170,7 @@ function FormCargo() {
                               type="date"
                               name="CargoDate"
                               onChange={handleChange}
+                              required
                             />
                           </div>
                         </div>
@@ -173,15 +193,16 @@ function FormCargo() {
                         {/* Kargo Durumu */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Kargo Durumu
+                            Kargo Durumu *
                           </label>
                           <div className="col-md-9">
                             <select
                               className="form-control"
                               name="CargoStatusID"
                               onChange={handleChange}
+                              required
                             >
-                              <option value="">*Lütfen Seçim Yapınız</option>
+                              <option value="">Lütfen Seçim Yapınız</option>
                               {cargoStatusList.map((status) => (
                                 <option
                                   key={status.CargoStatusID}
@@ -205,7 +226,7 @@ function FormCargo() {
                               name="CargoNameID"
                               onChange={handleChange}
                             >
-                              <option value="">*Lütfen Seçim Yapınız</option>
+                              <option value="">Lütfen Seçim Yapınız</option>
                               {cargoNamesList.map((company) => (
                                 <option
                                   key={company.CargoNameID}

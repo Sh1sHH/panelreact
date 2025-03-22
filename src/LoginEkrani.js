@@ -1,41 +1,51 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const LoginEkrani = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    // Fake kullanıcı listesi
-    const users = [
-      { id: 1, username: "admin", password: "1234" },
-      { id: 2, username: "yusuf", password: "3478" },
-    ];
+    try {
+      const requestBody = {
+        username: username,
+        password: password
+      };
 
-    // Kullanıcı doğrulama
-    const user = users.find(
-      (u) => u.username === username && u.password === password
-    );
+      const response = await axios.post(
+        "https://private-da348-yusuf7.apiary-mock.com/auth/login",
+        requestBody
+      );
 
-    if (user) {
-      // Kullanıcı bilgilerini kaydet
-      localStorage.setItem("userId", user.id);
-      localStorage.setItem("username", user.username);
-      
-      if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
+      if (response.data.success) {
+        // Başarılı login - API'den gelen verileri kullan
+        localStorage.setItem("userId", response.data.user.id);
+        localStorage.setItem("username", response.data.user.username);
+        localStorage.setItem("fullName", response.data.user.fullName);
+        localStorage.setItem("role", response.data.user.role);
+        localStorage.setItem("email", response.data.user.email);
+        localStorage.setItem("token", response.data.token);
+        
+        navigate("/Dashboard");
+      } else {
+        setError(response.data.message || "Hatalı kullanıcı adı veya şifre");
       }
-
-      // Kullanıcıyı yönlendir
-      navigate("/FormMusteri");
-    } else {
-      setError("Hatalı kullanıcı adı veya şifre!");
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setError(error.response.data.message || "Hatalı kullanıcı adı veya şifre");
+      } else {
+        setError("Giriş yapılırken bir hata oluştu");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,29 +59,61 @@ const LoginEkrani = () => {
       justifyContent: "center",
       alignItems: "center",
       minHeight: "100vh",
-      backgroundColor: "#f5f5f5",
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+      backgroundColor: "#48525e",
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
     }}>
       <div style={{
         width: "400px",
-        padding: "30px",
-        backgroundColor: "white",
-        borderRadius: "8px",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)"
+        padding: "40px 30px",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        borderRadius: "12px",
+        boxShadow: "0 0 20px rgba(27, 197, 189, 0.6)"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "30px" }}>
-          <h2 style={{ color: "#3c4b64", margin: "0 0 10px 0" }}>Giriş Yap</h2>
-          <p style={{ color: "#6c757d", margin: 0 }}>Hesabınıza giriş yapın</p>
+        <div style={{ textAlign: "center", marginBottom: "35px" }}>
+          <div style={{
+            margin: "0 auto 20px",
+            width: "150px",
+            height: "auto"
+          }}>
+            <img
+              src="../../assets/admin/layout3/img/logo-default.png"
+              alt="Metronic Logo"
+              style={{
+                width: "100%",
+                height: "auto"
+              }}
+            />
+          </div>
+          <h2 style={{ 
+            color: "#181C32", 
+            margin: "0 0 10px 0",
+            fontSize: "24px",
+            fontWeight: "300",
+            letterSpacing: "-0.5px",
+            fontFamily: "'Inter', sans-serif"
+          }}>
+            Hoş Geldiniz
+          </h2>
+          <p style={{ 
+            color: "#99A1B7", 
+            margin: "0",
+            fontSize: "14px",
+            lineHeight: "21px",
+            fontWeight: "300"
+          }}>
+            Devam etmek için giriş yapın
+          </p>
         </div>
         
         {error && (
           <div style={{
-            padding: "10px 15px",
-            backgroundColor: "#fde8e8",
-            color: "#e53e3e",
-            borderRadius: "4px",
-            marginBottom: "15px",
-            fontSize: "14px"
+            padding: "12px 16px",
+            backgroundColor: "#FFF5F8",
+            color: "#F1416C",
+            borderRadius: "6px",
+            marginBottom: "20px",
+            fontSize: "13px",
+            border: "1px solid #FFF5F8"
           }}>
             {error}
           </div>
@@ -79,120 +121,91 @@ const LoginEkrani = () => {
         
         <form onSubmit={handleLogin}>
           <div style={{ marginBottom: "20px" }}>
-            <label style={{
-              display: "block",
-              marginBottom: "5px",
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#4a5568"
-            }}>
-              Kullanıcı Adı
-            </label>
             <div style={{
               position: "relative"
             }}>
               <input
                 style={{
                   width: "100%",
-                  padding: "10px 15px 10px 40px",
-                  borderRadius: "4px",
-                  border: "1px solid #e2e8f0",
-                  fontSize: "16px",
+                  padding: "12px 16px",
+                  borderRadius: "6px",
+                  border: "1px solid #E4E6EF",
+                  backgroundColor: "#ffffff",
+                  color: "#181C32",
+                  fontSize: "14px",
                   outline: "none",
                   boxSizing: "border-box",
-                  transition: "border-color 0.2s"
+                  transition: "border-color 0.2s, box-shadow 0.2s",
+                  '&:focus': {
+                    borderColor: "#1BC5BD",
+                    boxShadow: "0 0 0 2px rgba(27, 197, 189, 0.1)"
+                  }
                 }}
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Kullanıcı adınızı girin"
+                placeholder="Kullanıcı adı"
                 required
+                disabled={loading}
                 aria-label="Kullanıcı Adı"
               />
-              <div style={{
-                position: "absolute",
-                left: "15px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#a0aec0"
-              }}>
-                <i className="fa fa-user"></i>
-              </div>
             </div>
           </div>
           
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{
-              display: "block",
-              marginBottom: "5px",
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#4a5568"
-            }}>
-              Şifre
-            </label>
+          <div style={{ marginBottom: "25px" }}>
             <div style={{
               position: "relative"
             }}>
               <input
                 style={{
                   width: "100%",
-                  padding: "10px 15px 10px 40px",
-                  borderRadius: "4px",
-                  border: "1px solid #e2e8f0",
-                  fontSize: "16px",
+                  padding: "12px 16px",
+                  borderRadius: "6px",
+                  border: "1px solid #E4E6EF",
+                  backgroundColor: "#ffffff",
+                  color: "#181C32",
+                  fontSize: "14px",
                   outline: "none",
                   boxSizing: "border-box",
-                  transition: "border-color 0.2s"
+                  transition: "border-color 0.2s, box-shadow 0.2s",
+                  '&:focus': {
+                    borderColor: "#1BC5BD",
+                    boxShadow: "0 0 0 2px rgba(27, 197, 189, 0.1)"
+                  }
                 }}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Şifrenizi girin"
+                placeholder="Şifre"
                 required
+                disabled={loading}
                 aria-label="Şifre"
               />
-              <div style={{
-                position: "absolute",
-                left: "15px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#a0aec0"
-              }}>
-                <i className="fa fa-lock"></i>
-              </div>
             </div>
-          </div>
-          
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px"
-          }}>
-           
           </div>
           
           <button
             type="submit"
+            disabled={loading}
             style={{
               width: "100%",
-              padding: "10px 15px",
-              backgroundColor: "#4299e1",
-              color: "white",
+              padding: "12px 16px",
+              backgroundColor: loading ? "#E4E6EF" : "#1BC5BD",
+              color: loading ? "#7E8299" : "white",
               border: "none",
-              borderRadius: "4px",
-              fontSize: "16px",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "background-color 0.2s"
+              borderRadius: "6px",
+              fontSize: "14px",
+              fontWeight: "600",
+              cursor: loading ? "not-allowed" : "pointer",
+              transition: "background-color 0.2s",
+              '&:hover': {
+                backgroundColor: loading ? "#E4E6EF" : "#0BB7AF"
+              }
             }}
           >
-            Giriş Yap
+            {loading ? "GİRİŞ YAPILIYOR..." : "GİRİŞ YAP"}
           </button>
         </form>
-        
-        
       </div>
     </div>
   );

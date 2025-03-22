@@ -87,7 +87,7 @@ function FormOrder() {
                         {/* Siparişi Veren */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Siparişi Veren
+                            Siparişi Veren *
                           </label>
                           <div className="col-md-9">
                             <input
@@ -105,7 +105,7 @@ function FormOrder() {
                         {/* Ürün */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Ürün ID
+                            Ürün ID *
                           </label>
                           <div className="col-md-9">
                             <input
@@ -122,7 +122,7 @@ function FormOrder() {
 
                         {/* Adet */}
                         <div className="form-group">
-                          <label className="col-md-3 control-label">Adet</label>
+                          <label className="col-md-3 control-label">Adet *</label>
                           <div className="col-md-9">
                             <input
                               type="number"
@@ -139,7 +139,7 @@ function FormOrder() {
                         {/* Birim Fiyat */}
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Birim Fiyat
+                            Birim Fiyat *
                           </label>
                           <div className="col-md-9">
                             <input

@@ -21,8 +21,8 @@ function Header() {
         {/* DOC: Remove data-hover="dropdown" and data-close-others="true" attributes below to disable the dropdown opening on mouse hover */}
         <div className="hor-menu">
           <ul className="nav navbar-nav">
-            <li className={isActive("/") ? "active" : ""}>
-              <Link to="/" style={{
+            <li className={isActive("/dashboard") ? "active" : ""}>
+              <Link to="/dashboard" style={{
                 display: "block",
                 padding: "14px 20px",
                 color: "white",

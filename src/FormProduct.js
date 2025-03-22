@@ -162,7 +162,7 @@ function FormProduct() {
 
                         <div className="form-group">
                           <label className="col-md-3 control-label">
-                            Fiyat
+                            Fiyat*
                           </label>
                           <div className="col-md-9">
                             <input
